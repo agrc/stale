@@ -13,16 +13,8 @@ jobs:
     steps:
     - name: ⬇️ Set up code
       uses: actions/checkout@v3
-    
-    - name: 🏗 Run tool
-      uses: github/stale-repos@v1
-      env:
-        GH_TOKEN: ${{ secrets.GH_TOKEN }}
-        EXEMPT_TOPICS: "keep,template"
-        ORGANIZATION: agrc
-        INACTIVE_DAYS: 365
 
-    - name: Run stale_repos tool
+    - name: 🏗 Run stale_repos tool
       uses: github/stale-repos@v1
       env:
         GH_TOKEN: ${{ secrets.GH_TOKEN }}
