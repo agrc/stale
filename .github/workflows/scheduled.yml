@@ -16,11 +16,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: ⬇️ Set up code
-      uses: actions/checkout@v4
-      with:
-          show-progress: false
-
     - name: 🏗 Run tool
       uses: github/stale-repos@v3
       env:
@@ -40,11 +35,18 @@ jobs:
         state: open
         labels: automated issue
 
+    - name: temp
+      run: |
+        echo found ${{ steps.last-issue.outputs.has-found }}
+        echo found ${{ steps.last-issue.outputs.issue-number }}
+        echo found ${{ steps.last-issue.outputs.is-closed }}
+
     - name: 🔔 Publish results
+      if: ${{ steps.last-issue.outputs.has-found == 'true' }}
       uses: peter-evans/create-issue-from-file@v5
       with:
         title: Stale Report
         content-filepath: ./stale_repos.md
-        issue-number: ${{ steps.last-issue.outputs.issue_number }}
+        issue-number: ${{ steps.last-issue.outputs.issue-number }}
         labels: automated issue
         token: ${{ secrets.GITHUB_TOKEN }}
