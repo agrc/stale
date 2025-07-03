@@ -9,6 +9,9 @@ jobs:
   build:
     name: stale repo identifier
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
 
     steps:
     - name: ⬇️ Set up code
