@@ -29,7 +29,6 @@ jobs:
         EXEMPT_TOPICS: "discussions-only,template,keep"
         INACTIVE_DAYS: 365
         ACTIVITY_METHOD: "pushed"
-        ADDITIONAL_METRICS: "release,pr"
 
     - name: 🖨️ Write workflow summary
       run: cat stale_repos.md >> $GITHUB_STEP_SUMMARY
