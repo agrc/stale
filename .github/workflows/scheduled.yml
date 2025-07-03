@@ -29,20 +29,23 @@ jobs:
         ACTIVITY_METHOD: "pushed"
         ADDITIONAL_METRICS: "release,pr"
 
+    - name: 🖨️ Write workflow summary
+      run: cat stale_repos.md >> $GITHUB_STEP_SUMMARY
+
     - name: 🔍 Check for existing issue
       run: |
-        ISSUE_NUMBER=$(gh search issues "Stale-repository-report" --match title --json number --jq ".[0].number")
+        ISSUE_NUMBER=$(gh search issues "Stale Report" --match title --json number --jq ".[0].number")
         echo "issue_number=$ISSUE_NUMBER" >> "$GITHUB_ENV"
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: 🖨️ Write workflow summary
-      run: cat stale_repos.md >> $GITHUB_STEP_SUMMARY
+    - name: List files
+      run: ls -la
 
     - name: 🔔 Publish results
       uses: peter-evans/create-issue-from-file@v5
       with:
         issue-number: ${{ env.issue_number }}
         title: Stale Report
-        content-filepath: stale_repos.md
+        content-filepath: ./stale_repos.md
         token: ${{ secrets.GITHUB_TOKEN }}
