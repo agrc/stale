@@ -3,7 +3,7 @@ name: Scheduled Events
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 0 1 * *'
+    - cron: '0 0 1 */3 *'
 
 permissions:
       contents: read
@@ -34,9 +34,18 @@ jobs:
     - name: 🖨️ Write workflow summary
       run: cat stale_repos.md >> $GITHUB_STEP_SUMMARY
 
+    - name: 🔍 Find the last open report issue
+      id: last-issue
+      uses: micalevisk/last-issue-action@v2
+      with:
+        state: open
+        labels: automated issue
+
     - name: 🔔 Publish results
       uses: peter-evans/create-issue-from-file@v5
       with:
         title: Stale Report
         content-filepath: ./stale_repos.md
+        issue-number: ${{ steps.last-issue.outputs.issue_number }}
+        labels: automated issue
         token: ${{ secrets.GITHUB_TOKEN }}
