@@ -44,5 +44,5 @@ jobs:
       with:
         issue-number: ${{ env.issue_number }}
         title: Stale Report
-        content-filepath: ./stale_repos.md
+        content-filepath: stale_repos.md
         token: ${{ secrets.GITHUB_TOKEN }}
