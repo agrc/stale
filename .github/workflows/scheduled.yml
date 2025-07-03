@@ -1,42 +1,48 @@
-name: stale repo identifier
+name: Scheduled Events
 
 on:
   workflow_dispatch:
   schedule:
     - cron: '0 0 1 * *'
 
-jobs:
-  build:
-    name: stale repo identifier
-    runs-on: ubuntu-latest
-    permissions:
+permissions:
       contents: read
+      pull-requests: read
       issues: write
+
+jobs:
+  execute:
+    name: Gathering repository stats
+    runs-on: ubuntu-latest
 
     steps:
     - name: ⬇️ Set up code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
-    - name: 🏗 Run stale_repos tool
-      uses: github/stale-repos@v1
+    - name: 🏗 Run tool
+      uses: github/stale-repos@v3
       env:
         GH_TOKEN: ${{ secrets.GH_TOKEN }}
         ORGANIZATION: agrc
         EXEMPT_TOPICS: "discussions-only,template,keep"
         INACTIVE_DAYS: 365
         ACTIVITY_METHOD: "pushed"
+        ADDITIONAL_METRICS: "release,pr"
 
-    - name: Check for the stale report issue
+    - name: 🔍 Check for existing issue
       run: |
-        ISSUE_NUMBER=$(gh search issues "Stale repository report" --match title --json number --jq ".[0].number")
+        ISSUE_NUMBER=$(gh search issues "Stale-repository-report" --match title --json number --jq ".[0].number")
         echo "issue_number=$ISSUE_NUMBER" >> "$GITHUB_ENV"
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: 🖨️ Write workflow summary
+      run: cat stale_repos.md >> $GITHUB_STEP_SUMMARY
 
     - name: 🔔 Publish results
       uses: peter-evans/create-issue-from-file@v5
       with:
         issue-number: ${{ env.issue_number }}
-        title: Stale repository report
+        title: Stale Report
         content-filepath: ./stale_repos.md
         token: ${{ secrets.GITHUB_TOKEN }}
